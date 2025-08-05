@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOOD MENU KEDAI OMA NANA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gallery-container {
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gallery-header {
+            background: linear-gradient(135deg, #175f38 0%, #175f38 100%);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .gallery-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .gallery-header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            flex: 1;
+            overflow: hidden;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            transform: translateX(100px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .image-slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .image-slide img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-radius: 8px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: white;
+            flex-shrink: 0;
+            border-top: 1px solid #eee;
+        }
+
+        .nav-button {
+            background: #175f38;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-width: 120px;
+            box-shadow: 0 4px 15px rgba(2, 82, 83, 0.3);
+        }
+
+        .nav-button:hover {
+            background: #175f38;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(2, 82, 83, 0.4);
+        }
+
+        .nav-button:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 2px 10px rgba(2, 82, 83, 0.3);
+        }
+
+        .nav-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: all 0.6s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .nav-button:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .image-counter {
+            background: #175f38;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 2px 10px rgba(2, 82, 83, 0.2);
+        }
+
+        .indicators {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 15px;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .indicator.active {
+            background: #175f38;
+            transform: scale(1.2);
+        }
+
+        .indicator:hover {
+            background: #03696a;
+            transform: scale(1.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .gallery-header {
+                padding: 12px 15px;
+            }
+
+            .gallery-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .gallery-header p {
+                font-size: 0.8rem;
+            }
+
+            .image-slide {
+                padding: 15px;
+            }
+
+            .controls {
+                padding: 12px 20px;
+                flex-wrap: wrap;
+                gap: 10px;
+                justify-content: center;
+            }
+
+            .nav-button {
+                padding: 10px 18px;
+                font-size: 14px;
+                min-width: 110px;
+            }
+
+            .indicators {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-header {
+                padding: 10px 12px;
+            }
+
+            .gallery-header h1 {
+                font-size: 1.3rem;
+            }
+
+            .gallery-header p {
+                font-size: 0.75rem;
+            }
+
+            .image-slide {
+                padding: 10px;
+            }
+
+            .controls {
+                padding: 10px 15px;
+            }
+
+            .nav-button {
+                padding: 8px 16px;
+                font-size: 13px;
+                min-width: 100px;
+            }
+
+            .image-counter {
+                font-size: 12px;
+                padding: 6px 15px;
+            }
+
+            .indicators {
+                padding: 10px;
+                gap: 6px;
+            }
+
+            .indicator {
+                width: 10px;
+                height: 10px;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .controls {
+                flex-direction: column;
+                gap: 8px;
+                padding: 8px;
+            }
+
+            .nav-button {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+
+        /* Landscape Mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .gallery-header {
+                padding: 8px 15px;
+            }
+
+            .gallery-header h1 {
+                font-size: 1.2rem;
+                margin-bottom: 2px;
+            }
+
+            .gallery-header p {
+                font-size: 0.7rem;
+            }
+
+            .controls {
+                padding: 8px 20px;
+            }
+
+            .nav-button {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .indicators {
+                padding: 8px;
+            }
+
+            .image-slide {
+                padding: 10px;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            font-size: 18px;
+            color: #025253;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery-container">
+        <div class="gallery-header">
+            <h1>KEDAI OMA NANA</h1>
+            <p>~Kopi • Donat • Ayam Goreng~</p>
+        </div>
+
+        <div class="image-container" id="imageContainer">
+    <div class="image-slide active"><img src="1.jpg" alt="Gambar 1" loading="lazy"></div>
+    <div class="image-slide"><img src="2.jpg" alt="Gambar 2" loading="lazy"></div>
+    <div class="image-slide"><img src="3.jpg" alt="Gambar 3" loading="lazy"></div>
+    <div class="image-slide"><img src="4.jpg" alt="Gambar 4" loading="lazy"></div>
+    <div class="image-slide"><img src="5.jpg" alt="Gambar 5" loading="lazy"></div>
+    <div class="image-slide"><img src="6.jpg" alt="Gambar 6" loading="lazy"></div>
+    <div class="image-slide"><img src="7.jpg" alt="Gambar 7" loading="lazy"></div>
+    <div class="image-slide"><img src="8.jpg" alt="Gambar 8" loading="lazy"></div>
+    <div class="image-slide"><img src="9.jpg" alt="Gambar 9" loading="lazy"></div>
+    <div class="image-slide"><img src="10.jpg" alt="Gambar 10" loading="lazy"></div>
+    <div class="image-slide"><img src="11.jpg" alt="Gambar 11" loading="lazy"></div>
+    <div class="image-slide"><img src="12.jpg" alt="Gambar 12" loading="lazy"></div>
+    <div class="image-slide"><img src="13.jpg" alt="Gambar 13" loading="lazy"></div>
+    <div class="image-slide"><img src="14.jpg" alt="Gambar 14" loading="lazy"></div>
+    <div class="image-slide"><img src="15.jpg" alt="Gambar 15" loading="lazy"></div>
+    <div class="image-slide"><img src="16.jpg" alt="Gambar 16" loading="lazy"></div>
+    <div class="image-slide"><img src="17.jpg" alt="Gambar 17" loading="lazy"></div>
+</div>
+
+
+        <div class="controls">
+            <button class="nav-button" id="prevBtn" onclick="prevImage()">
+                ← Sebelumnya
+            </button>
+            
+           <div class="image-counter">
+    <span id="currentIndex">1</span> / <span id="totalImages">17</span>
+</div>
+
+            
+            <button class="nav-button" id="nextBtn" onclick="nextImage()">
+                Selanjutnya →
+            </button>
+        </div>
+
+<div class="indicators" id="indicators">
+    <div class="indicator active" onclick="goToImage(0)"></div>
+    <div class="indicator" onclick="goToImage(1)"></div>
+    <div class="indicator" onclick="goToImage(2)"></div>
+    <div class="indicator" onclick="goToImage(3)"></div>
+    <div class="indicator" onclick="goToImage(4)"></div>
+    <div class="indicator" onclick="goToImage(5)"></div>
+    <div class="indicator" onclick="goToImage(6)"></div>
+    <div class="indicator" onclick="goToImage(7)"></div>
+    <div class="indicator" onclick="goToImage(8)"></div>
+    <div class="indicator" onclick="goToImage(9)"></div>
+    <div class="indicator" onclick="goToImage(10)"></div>
+    <div class="indicator" onclick="goToImage(11)"></div>
+    <div class="indicator" onclick="goToImage(12)"></div>
+    <div class="indicator" onclick="goToImage(13)"></div>
+    <div class="indicator" onclick="goToImage(14)"></div>
+    <div class="indicator" onclick="goToImage(15)"></div>
+    <div class="indicator" onclick="goToImage(16)"></div>
+</div>
+
+    </div>
+
+    <script>
+        let currentImageIndex = 0;
+        const totalImages = 17;
+        const slides = document.querySelectorAll('.image-slide');
+        const indicators = document.querySelectorAll('.indicator');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const currentIndexSpan = document.getElementById('currentIndex');
+
+        function updateGallery() {
+            // Update slides
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentImageIndex);
+            });
+
+            // Update indicators
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentImageIndex);
+            });
+
+            // Update counter
+            currentIndexSpan.textContent = currentImageIndex + 1;
+
+            // Update button states
+            prevBtn.disabled = currentImageIndex === 0;
+            nextBtn.disabled = currentImageIndex === totalImages - 1;
+        }
+
+        function nextImage() {
+            if (currentImageIndex < totalImages - 1) {
+                currentImageIndex++;
+                updateGallery();
+            }
+        }
+
+        function prevImage() {
+            if (currentImageIndex > 0) {
+                currentImageIndex--;
+                updateGallery();
+            }
+        }
+
+        function goToImage(index) {
+            currentImageIndex = index;
+            updateGallery();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                prevImage();
+            } else if (e.key === 'ArrowRight') {
+                nextImage();
+            }
+        });
+
+        // Touch/swipe support
+        let startX = 0;
+        let endX = 0;
+
+        document.getElementById('imageContainer').addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+
+        document.getElementById('imageContainer').addEventListener('touchend', (e) => {
+            endX = e.changedTouches[0].clientX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const threshold = 50;
+            const diff = startX - endX;
+
+            if (Math.abs(diff) > threshold) {
+                if (diff > 0) {
+                    nextImage(); // Swipe left - next image
+                } else {
+                    prevImage(); // Swipe right - previous image
+                }
+            }
+        }
+
+        // Initialize
+        updateGallery();
+
+        // Auto-play (optional - uncomment to enable)
+        /*
+        setInterval(() => {
+            if (currentImageIndex < totalImages - 1) {
+                nextImage();
+            } else {
+                currentImageIndex = 0;
+                updateGallery();
+            }
+        }, 5000);
+        */
+    </script>
+</body>
+</html>
